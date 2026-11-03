@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MotoTaxi Custodia – Pedir servicio</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f1fb;--surface:#fff;--ink:#1a1840;--muted:#5b5a80;--line:#d9d6ee;--accent:#ffc107;--accent-ink:#2a2000;--wa:#1faa59;--wa-ink:#fff;--sel:#2b2a6b;--sel-ink:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1030;--surface:#171a48;--ink:#f1f0ff;--muted:#a9aad6;--line:#303477;--accent:#ffc107;--accent-ink:#2a2000;--wa:#25d366;--wa-ink:#06260f;--sel:#ffc107;--sel-ink:#2a2000}}
+:root[data-theme="dark"]{--bg:#0d1030;--surface:#171a48;--ink:#f1f0ff;--muted:#a9aad6;--line:#303477;--accent:#ffc107;--accent-ink:#2a2000;--wa:#25d366;--wa-ink:#06260f;--sel:#ffc107;--sel-ink:#2a2000}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"Poppins","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.45}
+main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:2rem;line-height:1.1;margin:8px 0 4px;font-weight:800;letter-spacing:-.02em}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:0 0 20px}
+.svc{display:grid;gap:12px}
+.svc button{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px;border-radius:18px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-height:76px}
+.svc button .ic{font-size:2rem;flex:none}
+.svc button b{display:block;font-size:1.1rem}
+.svc button small{color:var(--muted)}
+.svc button[aria-pressed="true"]{background:var(--sel);border-color:var(--sel);color:var(--sel-ink)}
+.svc button[aria-pressed="true"] small{color:inherit;opacity:.85}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+form{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px}
+form[hidden]{display:none}
+h2{margin:0 0 4px;font-size:1.25rem}
+.hint{color:var(--muted);margin:0 0 14px;font-size:.92rem}
+label{display:block;font-weight:600;font-size:.92rem;margin:14px 0 6px}
+label i{font-weight:400;color:var(--muted);font-style:normal}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px 13px}
+textarea{min-height:84px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.row{grid-template-columns:1fr}}
+.loc{margin-top:8px;background:none;border:1.5px dashed var(--line);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;cursor:pointer;width:100%}
+.loc.ok{border-style:solid;border-color:var(--wa)}
+.send{margin-top:20px;width:100%;border:0;border-radius:16px;background:var(--wa);color:var(--wa-ink);font:inherit;font-weight:800;font-size:1.1rem;padding:16px;cursor:pointer}
+.err{color:#d6294a;font-size:.88rem;margin:10px 0 0;min-height:1.2em}
+.note{margin:16px 0 0;font-size:.85rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<main>
+<h1>MotoTaxi <span>Custodia</span></h1>
+<p class="sub">Elige tu servicio, llena los datos y envía el pedido por WhatsApp.</p>
+
+<div class="svc" role="group" aria-label="Servicios">
+  <button type="button" data-s="custodia" aria-pressed="false"><span class="ic">🛡️</span><span><b>Custodia</b><small>Te acompaño hasta tu casa</small></span></button>
+  <button type="button" data-s="delivery" aria-pressed="false"><span class="ic">📦</span><span><b>Delivery de madrugada</b><small>Compras urgentes a tu puerta</small></span></button>
+  <button type="button" data-s="fiesta" aria-pressed="false"><span class="ic">🎉</span><span><b>Salida de fiesta</b><small>Te llevo y te acompaño seguro</small></span></button>
+</div>
+
+<!-- CUSTODIA -->
+<form id="f-custodia" hidden novalidate>
+  <h2>Custodia</h2><p class="hint">Dime dónde estás y a dónde vas.</p>
+  <div class="row"><div><label>Tu nombre</label><input name="nombre" autocomplete="name" required></div>
+  <div><label>Tu celular</label><input name="cel" type="tel" inputmode="tel" autocomplete="tel" required></div></div>
+  <label>¿Dónde te recojo?</label><input name="origen" placeholder="Calle, zona o lugar conocido" required>
+  <button type="button" class="loc">📍 Compartir mi ubicación actual</button><input type="hidden" name="gps">
+  <label>¿A dónde te acompaño?</label><input name="destino" placeholder="Dirección de tu casa" required>
+  <div class="row"><div><label>Hora</label><select name="hora"><option>Ahora mismo</option><option>En 15 minutos</option><option>En 30 minutos</option><option>En 1 hora</option><option>Otra hora (la escribo abajo)</option></select></div>
+  <div><label>Personas</label><select name="pers"><option>1</option><option>2</option></select></div></div>
+  <label>Contacto de confianza <i>(opcional)</i></label><input name="conf" placeholder="Nombre y celular de alguien que sepa que vas en camino">
+  <label>Referencias <i>(opcional)</i></label><textarea name="ref" placeholder="Color de portón, tienda cercana, vestimenta…"></textarea>
+  <label>Forma de pago</label><select name="pago"><option>Efectivo</option><option>QR / transferencia</option></select>
+  <p class="err" role="alert"></p><button class="send" type="submit">Enviar pedido por WhatsApp</button>
+</form>
+
+<!-- DELIVERY -->
+<form id="f-delivery" hidden novalidate>
+  <h2>Delivery de madrugada</h2><p class="hint">Dime qué necesitas y dónde lo entrego.</p>
+  <div class="row"><div><label>Tu nombre</label><input name="nombre" autocomplete="name" required></div>
+  <div><label>Tu celular</label><input name="cel" type="tel" inputmode="tel" autocomplete="tel" required></div></div>
+  <label>¿Qué necesitas que compre?</label><textarea name="pedido" placeholder="Ej.: 1 paracetamol 500 mg, 2 bebidas, 1 pizza mediana" required></textarea>
+  <label>¿Dónde lo compro? <i>(opcional)</i></label><input name="tienda" placeholder="Farmacia, tienda o local que conoces">
+  <label>Dirección de entrega</label><input name="destino" placeholder="Calle, número, zona" required>
+  <button type="button" class="loc">📍 Compartir mi ubicación actual</button><input type="hidden" name="gps">
+  <label>Referencias <i>(opcional)</i></label><input name="ref" placeholder="Color de portón, tienda cercana…">
+  <div class="row"><div><label>Presupuesto aprox. (Bs)</label><input name="presu" inputmode="numeric" placeholder="Ej.: 80"></div>
+  <div><label>Forma de pago</label><select name="pago"><option>Efectivo</option><option>QR / transferencia</option></select></div></div>
+  <label>¿Tienes cambio de? <i>(opcional)</i></label><input name="cambio" inputmode="numeric" placeholder="Ej.: pago con billete de 100 Bs">
+  <p class="err" role="alert"></p><button class="send" type="submit">Enviar pedido por WhatsApp</button>
+</form>
+
+<!-- FIESTA -->
+<form id="f-fiesta" hidden novalidate>
+  <h2>Salida de fiesta</h2><p class="hint">Te recojo donde estés y te dejo en casa.</p>
+  <div class="row"><div><label>Tu nombre</label><input name="nombre" autocomplete="name" required></div>
+  <div><label>Tu celular</label><input name="cel" type="tel" inputmode="tel" autocomplete="tel" required></div></div>
+  <label>Lugar de la fiesta</label><input name="origen" placeholder="Nombre del local o dirección" required>
+  <button type="button" class="loc">📍 Compartir mi ubicación actual</button><input type="hidden" name="gps">
+  <label>Dónde te espero <i>(opcional)</i></label><input name="espera" placeholder="Ej.: en la puerta principal">
+  <label>¿A dónde te llevo?</label><input name="destino" placeholder="Dirección de tu casa" required>
+  <div class="row"><div><label>Hora de salida</label><input name="hora" type="time" required></div>
+  <div><label>Personas</label><select name="pers"><option>1</option><option>2</option></select></div></div>
+  <label>Contacto de confianza <i>(opcional)</i></label><input name="conf" placeholder="Nombre y celular">
+  <label>Forma de pago</label><select name="pago"><option>Efectivo</option><option>QR / transferencia</option></select>
+  <label>Notas <i>(opcional)</i></label><textarea name="nota" placeholder="Algo más que deba saber"></textarea>
+  <p class="err" role="alert"></p><button class="send" type="submit">Enviar pedido por WhatsApp</button>
+</form>
+
+<p class="note">El pedido se abre en WhatsApp para que lo revises antes de enviarlo.</p>
+</main>
+
+<script>
+(function(){
+  var PHONE="59168972863";
+  var TITLES={custodia:"🛡️ *PEDIDO – CUSTODIA*",delivery:"📦 *PEDIDO – DELIVERY*",fiesta:"🎉 *PEDIDO – SALIDA DE FIESTA*"};
+  var LINES={
+    custodia:[["Nombre","nombre"],["Celular","cel"],["Recojo en","origen"],["Destino","destino"],["Hora","hora"],["Personas","pers"],["Contacto de confianza","conf"],["Referencias","ref"],["Pago","pago"]],
+    delivery:[["Nombre","nombre"],["Celular","cel"],["Pedido","pedido"],["Comprar en","tienda"],["Entregar en","destino"],["Referencias","ref"],["Presupuesto (Bs)","presu"],["Pago","pago"],["Cambio de","cambio"]],
+    fiesta:[["Nombre","nombre"],["Celular","cel"],["Fiesta en","origen"],["Espero en","espera"],["Destino","destino"],["Hora de salida","hora"],["Personas","pers"],["Contacto de confianza","conf"],["Pago","pago"],["Notas","nota"]]
+  };
+  var btns=document.querySelectorAll(".svc button");
+  var forms={};["custodia","delivery","fiesta"].forEach(function(k){forms[k]=document.getElementById("f-"+k)});
+
+  function show(k){
+    btns.forEach(function(b){b.setAttribute("aria-pressed",b.dataset.s===k?"true":"false")});
+    Object.keys(forms).forEach(function(n){forms[n].hidden=(n!==k)});
+    forms[k].scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  btns.forEach(function(b){b.addEventListener("click",function(){show(b.dataset.s)})});
+
+  // recordar nombre y celular
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem("mtc")||"{}")}catch(e){}
+  Object.keys(forms).forEach(function(k){
+    var f=forms[k];
+    if(saved.nombre)f.elements.nombre.value=saved.nombre;
+    if(saved.cel)f.elements.cel.value=saved.cel;
+    var loc=f.querySelector(".loc");
+    loc.addEventListener("click",function(){
+      if(!navigator.geolocation){loc.textContent="Tu navegador no permite ubicación";return}
+      loc.textContent="Buscando ubicación…";
+      navigator.geolocation.getCurrentPosition(function(p){
+        f.elements.gps.value="https://maps.google.com/?q="+p.coords.latitude.toFixed(6)+","+p.coords.longitude.toFixed(6);
+        loc.textContent="✅ Ubicación agregada";loc.classList.add("ok");
+      },function(){loc.textContent="No se pudo obtener. Escribe la dirección."},{enableHighAccuracy:true,timeout:10000});
+    });
+    f.addEventListener("submit",function(ev){
+      ev.preventDefault();
+      var err=f.querySelector(".err");err.textContent="";
+      var missing=null;
+      f.querySelectorAll("[required]").forEach(function(el){if(!missing&&!el.value.trim())missing=el});
+      if(missing){err.textContent="Falta completar: "+missing.closest("div,form").querySelector("label").textContent.trim()+".";missing.focus();return}
+      var cel=f.elements.cel.value.replace(/\D/g,"");
+      if(cel.length<8){err.textContent="Escribe un celular válido de 8 dígitos.";f.elements.cel.focus();return}
+      try{localStorage.setItem("mtc",JSON.stringify({nombre:f.elements.nombre.value.trim(),cel:f.elements.cel.value.trim()}))}catch(e){}
+      var out=[TITLES[k],""];
+      LINES[k].forEach(function(l){var v=(f.elements[l[1]].value||"").trim();if(v)out.push("*"+l[0]+":* "+v)});
+      if(f.elements.gps.value)out.push("*Ubicación:* "+f.elements.gps.value);
+      out.push("","Enviado desde la web de MotoTaxi Custodia");
+      var url="https://wa.me/"+PHONE+"?text="+encodeURIComponent(out.join("\n"));
+      var a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";
+      document.body.appendChild(a);a.click();a.remove();
+    });
+  });
+})();
+</script>
+</body>
+</html>
